@@ -31,7 +31,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.use('/api',router);
-app.get('/', (req, res)=>{ res.send('You are at the root of the meetup'); });
+app.get('/', (req, res)=>{ res.send('=== You are at the root of the meetup ==='); });
 
 /*
 app.listen(3000, '0.0.0.0', function() {
