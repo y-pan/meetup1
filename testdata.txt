@@ -1,0 +1,29 @@
+======================================= Group: =======================================
+
+{
+    "name" : "group1",
+    "code" : "abc",
+    "discription" : "In toronto",
+    "owner" : "panyunkui2@gmail.com",
+    "members" : "",
+    "membersIn" : "",
+    "radius" : 50,
+    "loc" : [ 
+        43.653226, 
+        -79.383184
+    ]
+}
+-------------------------------------- User --------------------------------------
+{
+    "email" : "panyunkui2@gmail.com",
+    "name" : "Yun",
+    "number" : "6471231234",
+    "password" : "111",
+    "groupCodes" : [ 
+        "abc"
+    ],
+    "loc" : [ 
+        43.762686, -79.295182
+    ]
+}
+
