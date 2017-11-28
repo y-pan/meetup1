@@ -27,3 +27,7 @@
     ]
 }
 
+
+Response:
+{err: null, data: {}}
+{err: "msg", data: null}
