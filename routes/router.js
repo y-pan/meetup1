@@ -61,7 +61,7 @@ router.post("/user/login/", (req, res, next)=>{
     res.send("username="+username +" password="+password);
 })
 
-get.get("/user/login/", (req, res, next)=>{
+router.get("/user/login/", (req, res, next)=>{
     let username = req.query('username');
     let password = req.query('password');
     console.log("reg request",username + " | " + password);
