@@ -17,57 +17,66 @@ router.get('/', (req, res)=>{res.send("api version: 1");});
     //res.json({ "adminAuthenticated": true });
 //});  
 
-// http://localhost:3000/api/user/login?email=panyunkui2@gmail.com&password=111
-router.post("/user/login/", (req, res)=>{
-    let email = req.query.email;
-    let password = req.query.password;
-    let obj = {email,password}
-    console.log("reg request using obj", obj);
-    
-    User.getUserByQueryJson(obj,(err,data)=>{
-        // console.log("validate: err="+err+"\ndata="+data);
+// ### Register : req.body is better maintainable, just need to modify model and done
+router.post('/user/register',(req,res,next)=>{
+    let newUser;
+    newUser = new User(req.body);  
+    console.log(newUser.email);
+
+    // check if email already used, don't proceed
+    User.getUserByQueryJson({"email":newUser.email},(err,data)=>{
         if(err){
-            res.json({"err":err,"data":null});
+            res.json({"err":vars.MSG.ERROR_CONNECTION,"data":null});
         }else{
             if(data){
-                res.json({"err":null,"data":data});
+                res.json({"err":vars.MSG.ERROR_EMAIL_DUPLICATED, "data":null});
             }else{
-                res.json({"err":"User not found","data":null});
+                // ok to use this email, clientside should check password valid(not empty, ...)
+                User.addUser(newUser, (err, data)=>{
+                    if(err){res.json({"err":vars.MSG.ERROR_OPERATION, "data":null});}
+                    else{ res.json({"err":null,"data":data});}
+                });
             }
-            
         }
     })
-    // User.getUserByEmailPassword(email,password,(err,data)=>{
-    //     console.log("validate: err="+err+"\ndata="+data);
-    //     if(err){
-    //         res.json({"err":err,"data":null});
-    //     }else{
-    //         if(data){
-    //             res.json({"err":null,"data":data});
-    //         }else{
-    //             res.json({"err":"User not found","data":null});
-    //         }
-            
-    //     }
-    // })
+
+
     
+});
+
+// ### login: http://localhost:3000/api/user/login?email=panyunkui2@gmail.com&password=111
+router.post("/user/login", (req, res)=>{
+    let obj = {};
+    let email = req.query.email;
+    let password = req.query.password;
+    if(email && password){          // post via url
+        obj = {email,password};
+    }else{                          // post via body 
+        obj = req.body;
+    }
+    
+    User.getUserByQueryJson(obj,(err,data)=>{
+        if(err){
+            res.json({"err":vars.MSG.ERROR_CONNECTION,"data":null});
+        }else{
+            if(!data){
+                res.json({"err":vars.MSG.ERROR_NOTFOUND,"data":null});
+            }else{
+                res.json({"err":null,"data":data});
+            }
+        }
+    })
 })
 
-
-
-
+// 
 router.get('/user', (req, res)=>{
+    
     User.findAll((err,data)=>{
         res.json(data);
     })
 });
-router.post('/user',(req,res,next)=>{
-    let newUser = new User(req.body);
-    User.addUser(newUser, (err, data)=>{
-        if(err){res.json({success:false, msg:"Operation failed - " + err});}
-        else{res.json({success:true, msg:"User added successfully."});}
-    });
-});
+
+
 
 
 router.get('/group', (req, res)=>{

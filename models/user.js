@@ -6,9 +6,10 @@ const Group = require('./group');
 const Lib = require('../Lib/lib1');
 const UserSchema = mongoose.Schema({
     email:{type:String, require:true},
-    name:{type:String, require:true },
+    password:{type:String, require:true},
+    
+    name:{type:String},
     number:{type:String},
-    password:{type:String},
     groupCodes:{type:[String]},
     loc: { type: [Number]}
     
@@ -35,20 +36,20 @@ module.exports.addUser = (newUser, callback) =>{
     newUser.save(callback); // newUser is a mongoose object
 };
 
+module.exports.getUserByQueryJson = (jsonObject, callback)=>{
+    const query = jsonObject;
+    User.findOne(query, callback); 
+};
 
 module.exports.getUserByEmailPassword = (email, password, callback)=>{
     const query = {email:email, password:password};
     User.findOne(query, callback); 
 };
-
 module.exports.getUserByEmail = (email, callback)=>{
     const query = {email:email};
     User.findOne(query, callback); 
 };
-module.exports.getUserByQueryJson = (jsonObject, callback)=>{
-    const query = jsonObject;
-    User.findOne(query, callback); 
-};
+
 // module.exports.getUserByEmail = (email, callback)=>{
 //     console.log("In User: ", email);
 //     const query = {email:email, password:"111"};

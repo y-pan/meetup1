@@ -1,6 +1,6 @@
 module.exports = {
+    isDbLocal:false,    
     port:3000,
-    isDbLocal:false,
     msgCode:{
         notConnected:0,
         notFound:1,
@@ -11,6 +11,9 @@ module.exports = {
         ERROR_CONNECTION:"Error in databas connection",
         ERROR_NOTFOUND:"Data not found in database",
         ERROR_OPERATION:"Operation failed in database",
+        ERROR_EMAIL_DUPLICATED:"Email is already used",
+
+
         SUCCESS:"Operation done sucessfully"
     }
     
