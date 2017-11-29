@@ -1,0 +1,5 @@
+1. get all users:
+    https://meetus01.herokuapp.com/api/user
+2. get all event:
+    https://meetus01.herokuapp.com/api/group
+3. register 

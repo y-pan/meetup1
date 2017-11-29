@@ -54,6 +54,12 @@ router.get('/user_gps/', (req,res,next)=>{
     })
 })
 
+router.post("/user/register/", (req, res, next)=>{
+    let username = req.query('username');
+    let password = req.query('password');
+    console.log("reg request",username + " | " + password);
+    res.send({"username":username,"password":password});
+})
 
 
 module.exports = router; 

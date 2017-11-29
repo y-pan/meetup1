@@ -30,8 +30,8 @@ app.set('port', (process.env.PORT || 3000));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.use('/api',router);
-app.get('/', (req, res)=>{ res.send('=== You are at the root of the meetup 2 ==='); });
+app.use('/api',router); //    {root}/api will go for router
+app.get('/', (req, res)=>{ res.send('=== Reached root of the meetus, please go to /api ==='); });
 
 /*
 app.listen(3000, '0.0.0.0', function() {

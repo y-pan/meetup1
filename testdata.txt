@@ -1,19 +1,21 @@
-======================================= Group: =======================================
+
+======================================= Group/Event Table: =======================================
 
 {
     "name" : "group1",
     "code" : "abc",
     "discription" : "In toronto",
     "owner" : "panyunkui2@gmail.com",
-    "members" : "",
-    "membersIn" : "",
+    "members" : [person1@gmail.com, person2@hotmail.com],
+    "membersIn" : [person1@gmail.com, person2@hotmail.com],
     "radius" : 50,
     "loc" : [ 
         43.653226, 
         -79.383184
     ]
 }
--------------------------------------- User --------------------------------------
+
+-------------------------------------- User Table --------------------------------------
 {
     "email" : "panyunkui2@gmail.com",
     "name" : "Yun",
@@ -24,10 +26,17 @@
     ],
     "loc" : [ 
         43.762686, -79.295182
-    ]
+    ],
+    "hostevents":[],
+    "guestevents":[]
 }
 
 
 Response:
 {err: null, data: {}}
 {err: "msg", data: null}
+
+
+
+
+
