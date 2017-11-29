@@ -16,18 +16,6 @@ router.get('/', (req, res)=>{res.send("hihihi");});
 //router.get('/user', passport.authenticate('jwt',{session:false}), (req, res)=>{
     //res.json({ "adminAuthenticated": true });
 //});  
-router.get('/user', (req, res)=>{
-    User.findAll((err,data)=>{
-        res.json(data);
-    })
-});
-router.post('/user',(req,res,next)=>{
-    let newUser = new User(req.body);
-    User.addUser(newUser, (err, data)=>{
-        if(err){res.json({success:false, msg:"Operation failed - " + err});}
-        else{res.json({success:true, msg:"User added successfully."});}
-    });
-});
 
 router.post("/user/login/", (req, res, next)=>{
     let username = req.query('username');
@@ -42,6 +30,19 @@ router.get("/user/login/", (req, res, next)=>{
     console.log("reg request",username + " | " + password);
     res.send("login here");
 })
+
+router.get('/user', (req, res)=>{
+    User.findAll((err,data)=>{
+        res.json(data);
+    })
+});
+router.post('/user',(req,res,next)=>{
+    let newUser = new User(req.body);
+    User.addUser(newUser, (err, data)=>{
+        if(err){res.json({success:false, msg:"Operation failed - " + err});}
+        else{res.json({success:true, msg:"User added successfully."});}
+    });
+});
 
 
 router.get('/group', (req, res)=>{
