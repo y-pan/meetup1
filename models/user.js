@@ -35,10 +35,30 @@ module.exports.addUser = (newUser, callback) =>{
     newUser.save(callback); // newUser is a mongoose object
 };
 
+
+module.exports.getUserByEmailPassword = (email, password, callback)=>{
+    const query = {email:email, password:password};
+    User.findOne(query, callback); 
+};
+
 module.exports.getUserByEmail = (email, callback)=>{
     const query = {email:email};
-    User.findOne(query, callback);
+    User.findOne(query, callback); 
 };
+module.exports.getUserByQueryJson = (jsonObject, callback)=>{
+    const query = jsonObject;
+    User.findOne(query, callback); 
+};
+// module.exports.getUserByEmail = (email, callback)=>{
+//     console.log("In User: ", email);
+//     const query = {email:email, password:"111"};
+//     User.findOne(query, (err,data)=>{
+//         console.log("found email");
+//         console.log("err",err);
+//         console.log("data",data);
+        
+//     });
+// };
 
 module.exports.getUserByEmail_p = (email) =>{
     return new Promise((resolve, reject) =>{

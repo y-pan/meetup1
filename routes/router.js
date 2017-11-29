@@ -10,26 +10,51 @@ const User = require('../models/user');    // user mongoose model
 const Group = require('../models/group');  // user will join group 
 
 // 
-router.get('/', (req, res)=>{res.send("hihihi");});
+router.get('/', (req, res)=>{res.send("api version: 1");});
 
 // here is the business
 //router.get('/user', passport.authenticate('jwt',{session:false}), (req, res)=>{
     //res.json({ "adminAuthenticated": true });
 //});  
 
-router.post("/user/login/", (req, res, next)=>{
-    let username = req.query('username');
-    let password = req.query('password');
-    console.log("reg request",username + " | " + password);
-    res.send("username="+username +" password="+password);
+// http://localhost:3000/api/user/login?email=panyunkui2@gmail.com&password=111
+router.post("/user/login/", (req, res)=>{
+    let email = req.query.email;
+    let password = req.query.password;
+    let obj = {email,password}
+    console.log("reg request using obj", obj);
+    
+    User.getUserByQueryJson(obj,(err,data)=>{
+        // console.log("validate: err="+err+"\ndata="+data);
+        if(err){
+            res.json({"err":err,"data":null});
+        }else{
+            if(data){
+                res.json({"err":null,"data":data});
+            }else{
+                res.json({"err":"User not found","data":null});
+            }
+            
+        }
+    })
+    // User.getUserByEmailPassword(email,password,(err,data)=>{
+    //     console.log("validate: err="+err+"\ndata="+data);
+    //     if(err){
+    //         res.json({"err":err,"data":null});
+    //     }else{
+    //         if(data){
+    //             res.json({"err":null,"data":data});
+    //         }else{
+    //             res.json({"err":"User not found","data":null});
+    //         }
+            
+    //     }
+    // })
+    
 })
 
-router.get("/user/login/", (req, res, next)=>{
-    // let username = req.query('username');
-    // let password = req.query('password');
-    // console.log("reg request",username + " | " + password);
-    res.send("login here");
-})
+
+
 
 router.get('/user', (req, res)=>{
     User.findAll((err,data)=>{

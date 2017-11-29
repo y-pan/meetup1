@@ -1,5 +1,15 @@
+api start point: 
+    [api-root] = https://meetus01.herokuapp.com/api
+    [api-root] = http://localhost:3000/api
 1. get all users:
-    https://meetus01.herokuapp.com/api/user
+    [api-root]/user
 2. get all event:
-    https://meetus01.herokuapp.com/api/group
-3. register 
+    [api-root]/group
+3. register
+4. login:
+    [api-root]/user/login?email=panyunkui2@gmail.com&password=111
+    METHOD: POST
+    Return:
+        connection broken: {"err":err,"data":null}
+        connection OK, data not found: {"err":"User not found","data":null}
+        OK: {"err":null,"data":data}

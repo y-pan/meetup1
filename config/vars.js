@@ -1,6 +1,6 @@
 module.exports = {
     port:3000,
-    isDbLocal:false,
+    isDbLocal:true,
     msgCode:{
         notConnected:0,
         notFound:1,
