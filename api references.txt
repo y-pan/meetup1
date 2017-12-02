@@ -3,7 +3,7 @@ api start point:
     [api-root] = http://localhost:3000/api
 1. get all users:
     [api-root]/user
-2. get all event:
+2. get all event: (to be improved)
     [api-root]/group
 3. register: Post via body
     [api-root]/user/register

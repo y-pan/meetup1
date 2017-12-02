@@ -24,21 +24,39 @@ router.post('/user/register',(req,res,next)=>{
     console.log(newUser.email);
 
     // check if email already used, don't proceed
+
     User.getUserByQueryJson({"email":newUser.email},(err,data)=>{
         if(err){
-            res.json({"err":vars.MSG.ERROR_CONNECTION,"data":null});
+            res.json({"err":vars.MSG.ERROR_CONNECTION});
         }else{
             if(data){
-                res.json({"err":vars.MSG.ERROR_EMAIL_DUPLICATED, "data":null});
+                res.json({"err":vars.MSG.ERROR_EMAIL_DUPLICATED});
             }else{
                 // ok to use this email, clientside should check password valid(not empty, ...)
                 User.addUser(newUser, (err, data)=>{
-                    if(err){res.json({"err":vars.MSG.ERROR_OPERATION, "data":null});}
-                    else{ res.json({"err":null,"data":data});}
+                    if(err){res.json({"err":vars.MSG.ERROR_OPERATIO});}
+                    else{ res.json({"data":data});}
                 });
             }
         }
     })
+
+
+    // User.getUserByQueryJson({"email":newUser.email},(err,data)=>{
+    //     if(err){
+    //         res.json({"err":vars.MSG.ERROR_CONNECTION,"data":null});
+    //     }else{
+    //         if(data){
+    //             res.json({"err":vars.MSG.ERROR_EMAIL_DUPLICATED, "data":null});
+    //         }else{
+    //             // ok to use this email, clientside should check password valid(not empty, ...)
+    //             User.addUser(newUser, (err, data)=>{
+    //                 if(err){res.json({"err":vars.MSG.ERROR_OPERATION, "data":null});}
+    //                 else{ res.json({"err":null,"data":data});}
+    //             });
+    //         }
+    //     }
+    // })
 
 
     
