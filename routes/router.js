@@ -75,15 +75,27 @@ router.post("/user/login", (req, res)=>{
     
     User.getUserByQueryJson(obj,(err,data)=>{
         if(err){
-            res.json({"err":vars.MSG.ERROR_CONNECTION,"data":null});
+            res.json({"err":vars.MSG.ERROR_CONNECTION});
         }else{
             if(!data){
-                res.json({"err":vars.MSG.ERROR_NOTFOUND,"data":null});
+                res.json({"err":vars.MSG.ERROR_NOTFOUND});
             }else{
-                res.json({"err":null,"data":data});
+                res.json({"data":data});
             }
         }
     })
+
+    // User.getUserByQueryJson(obj,(err,data)=>{
+    //     if(err){
+    //         res.json({"err":vars.MSG.ERROR_CONNECTION,"data":null});
+    //     }else{
+    //         if(!data){
+    //             res.json({"err":vars.MSG.ERROR_NOTFOUND,"data":null});
+    //         }else{
+    //             res.json({"err":null,"data":data});
+    //         }
+    //     }
+    // })
 })
 
 // 
