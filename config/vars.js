@@ -13,6 +13,7 @@ module.exports = {
         ERROR_OPERATION:"Operation failed in database",
         ERROR_EMAIL_DUPLICATED:"Email is already used",
 
+        ERROR_EVENT_TITLE_DUPLICATED:"Event title duplicated",
 
         SUCCESS:"Operation done sucessfully"
     }

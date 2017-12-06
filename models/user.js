@@ -2,7 +2,7 @@
 // loc: [lat, lon]
 const vars = require('../config/vars');
 const mongoose = require('mongoose');
-const Group = require('./group');
+const Event = require('./event');
 const Lib = require('../Lib/lib1');
 const UserSchema = mongoose.Schema({
     email:{type:String, require:true},
@@ -10,7 +10,7 @@ const UserSchema = mongoose.Schema({
     
     name:{type:String},
     number:{type:String},
-    groupCodes:{type:[String]},
+    eventCodes:{type:[String]},
     loc: { type: [Number]}
     
 },{collection:'user'});
@@ -21,7 +21,7 @@ const UserSchema = mongoose.Schema({
     "name":"Yun",
     "number":"6471231234",
     "password":"111",
-    "groupCodes":["abc123"],
+    "eventCodes":["abc123"],
     "loc": [100.11,-55.78]
 }
  */
@@ -87,7 +87,7 @@ module.exports.updateUserById = (id, body, callback) => {
             userFound.name = body.name || userFound.name;
             userFound.number = body.number || userFound.number;
             userFound.email = body.email || userFound.email;
-            userFound.groupCodes = body.groupCodes || userFound.groupCodes;
+            userFound.eventCodes = body.eventCodes || userFound.eventCodes;
             userFound.loc = body.loc || userFound.loc;
 
             userFound.save((err, userFound) =>{
@@ -111,11 +111,11 @@ module.exports.deleteUserById = (id, callback) => {
 
 module.exports.updateGps = (email,lat,lon,code,callback) =>{
     
-    Promise.all([User.getUserByEmail_p(email), Group.getGroupByCode_p(code)]).then(responses=>{
+    Promise.all([User.getUserByEmail_p(email), Event.getEventByCode_p(code)]).then(responses=>{
         let _user = responses[0];
-        let _group = responses[1];
+        let _event = responses[1];
         //console.log("\n+++++++++++++++++++\n" + _user);
-        //console.log("\n*******************\n" + _group);
+        //console.log("\n*******************\n" + _event);
         // now to calculate distance of 
         _user.save()
 
@@ -125,7 +125,7 @@ module.exports.updateGps = (email,lat,lon,code,callback) =>{
             else{ 
                 //callback(null, user); 
                 //get distance
-                // Lib to do distance _user.loc and _group.loc  !!!!!!!!!!!!!!!
+                // Lib to do distance _user.loc and _event.loc  !!!!!!!!!!!!!!!
             }
         })
     }).catch(errors => {
@@ -137,9 +137,9 @@ module.exports.updateGps = (email,lat,lon,code,callback) =>{
         let _user = user;
         // save to db
         console.log("user not yet saved to db");
-        Group.getGroupByCode_p(code).then((group)=>{
+        Event.getEventByCode_p(code).then((event)=>{
             console.log("+++++++++++++++++++" + _user);
-            console.log("*******************" + group);
+            console.log("*******************" + event);
         }).catch((err) =>{ callback(err,null)})
     }).catch((err)=>{
         callback(err,null);
