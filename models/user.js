@@ -15,17 +15,6 @@ const UserSchema = mongoose.Schema({
     
 },{collection:'user'});
 
-/**
-{
-    "email":"panyunkui2@gmail.com",
-    "name":"Yun",
-    "number":"6471231234",
-    "password":"111",
-    "eventCodes":["abc123"],
-    "loc": [100.11,-55.78]
-}
- */
-
 const User = module.exports = mongoose.model('user',UserSchema);
 
 module.exports.findAll = (callback) =>{
@@ -49,17 +38,6 @@ module.exports.getUserByEmail = (email, callback)=>{
     const query = {email:email};
     User.findOne(query, callback); 
 };
-
-// module.exports.getUserByEmail = (email, callback)=>{
-//     console.log("In User: ", email);
-//     const query = {email:email, password:"111"};
-//     User.findOne(query, (err,data)=>{
-//         console.log("found email");
-//         console.log("err",err);
-//         console.log("data",data);
-        
-//     });
-// };
 
 module.exports.getUserByEmail_p = (email) =>{
     return new Promise((resolve, reject) =>{

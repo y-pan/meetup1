@@ -25,15 +25,13 @@ const EventSchema = mongoose.Schema({
     duration:{type:Number}  /* number of hours from the start date, so end-date = start-data + duration */
 
 },{collection:'event'});
-
-// size:
+// eventStartTime:{type: Date, default: Date.now},
 
 //coordinates:req.body.coordinates.split(',').map(Number)
 
 //var distance = require('gps-distance');
 // Measure between two points: 
 //var result = distance(45.527517, -122.718766, 45.373373, -121.693604);
-
 
 const Event = module.exports = mongoose.model('event',EventSchema);
 
@@ -49,7 +47,6 @@ module.exports.getEventsByQueryJson = (jsonObject, callback)=>{
     const query = jsonObject;
     Event.find(query, callback); 
 };
-
 
 module.exports.getEventByQueryJson = (jsonObject, callback)=>{
     const query = jsonObject;
