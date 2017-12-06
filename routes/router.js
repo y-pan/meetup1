@@ -74,23 +74,36 @@ router.post('/event', (req, res) => {
     let newEvent = new Event(req.body);
     console.log(newEvent);
 
-    // check if email already used, don't proceed
-
-    Event.getEventByQueryJson({ "title": newEvent.title }, (err, data) => {
+    // check if host_id exists in db
+    User.getUserByQueryJson({ "_id": newEvent.host_id }, (err, data) => {
         if (err) {
             res.json({ "err": vars.MSG.ERROR_CONNECTION });
         } else {
-            if (data) {
-                res.json({ "err": vars.MSG.ERROR_EVENT_TITLE_DUPLICATED });
+            if (!data || data.length == 0) {
+                res.json({ "err": vars.MSG.ERROR_HOST_NOTFOUND });
             } else {
-                // ok to use this event, clientside should check other fields if valid(not empty, ...)
-                Event.addEvent(newEvent, (err, data) => {
-                    if (err) { res.json({ "err": vars.MSG.ERROR_OPERATIO }); }
-                    else { res.json({ "data": data }); }
+                // check if title already used, don't proceed
+                Event.getEventByQueryJson({ "title": newEvent.title }, (err, data) => {
+                    if (err) {
+                        res.json({ "err": vars.MSG.ERROR_CONNECTION });
+                    } else {
+                        if (data) {
+                            res.json({ "err": vars.MSG.ERROR_EVENT_TITLE_DUPLICATED });
+                        } else {
+                            // ok to use this event, clientside should check other fields if valid(not empty, ...)
+                            Event.addEvent(newEvent, (err, data) => {
+                                if (err) { res.json({ "err": vars.MSG.ERROR_OPERATIO }); }
+                                else { res.json({ "data": data }); }
+                            });
+                        }
+                    }
                 });
+
             }
         }
     })
+
+
 });
 
 // ### [4] host get hosting events: http://localhost:3000/api/host_event

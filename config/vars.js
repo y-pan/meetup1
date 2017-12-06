@@ -14,6 +14,9 @@ module.exports = {
         ERROR_EMAIL_DUPLICATED:"Email is already used",
 
         ERROR_EVENT_TITLE_DUPLICATED:"Event title duplicated",
+        ERROR_HOST_NOTFOUND:"Host user not found in database",
+
+
 
         SUCCESS:"Operation done sucessfully"
     }
