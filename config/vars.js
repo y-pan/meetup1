@@ -1,5 +1,5 @@
 module.exports = {
-    isDbLocal:false,    
+    isDbLocal:true,    
     port:3000,
     msgCode:{
         notConnected:0,
@@ -15,6 +15,9 @@ module.exports = {
 
         ERROR_EVENT_TITLE_DUPLICATED:"Event title duplicated",
         ERROR_HOST_NOTFOUND:"Host user not found in database",
+
+        ERROR_UPDATE_FAILED:"Failed to update data, please try again",
+        ERROR_REMOVE_FAILED:"Failed to remove data, please try again",
 
 
 

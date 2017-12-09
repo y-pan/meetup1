@@ -132,7 +132,29 @@ router.post('/host_event', (req, res) => {
     });
 });
 
-// ### 
+// ### [5?] host update a hosting event : http://localhost:3000/api/host_event?id=123abd123jkl
+router.put('/host_event/:id', (req, res) =>{
+    Event.updateEventById(req.params.id, req.body, (err, data) => {
+        if(err){
+            res.json({"err": err}); // model class specified err message already
+        }else{
+            res.json({"data":data});
+        }
+    });
+
+});
+
+// ### [6?] host delete a hosting event
+router.delete('/host_event/:id',(req, res)=>{
+    Event.deleteEventById(req.params.id, (err, data)=>{
+        if(err){ 
+            res.json({"err":err}); // model class specified err message already
+        } else{ 
+            res.json({"data":data}); 
+        }
+    });
+});
+
 
 
 router.get('/user', (req, res) => {

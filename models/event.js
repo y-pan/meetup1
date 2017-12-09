@@ -4,6 +4,7 @@
 
 // data rules: no duplicated code, members and membersIn is email
 // loc: [lat, lon]
+const vars = require('../config/vars');
 
 const mongoose = require('mongoose');
 
@@ -90,17 +91,31 @@ module.exports.getEventById = (id,callback)=>{
     Event.findById(id, callback); // id refers to _id. When mongodb saves an data object(document) into collection, it creats unique _id within the document, as an additional attribute
 };
 
+
 module.exports.updateEventById = (id, body, callback) => {
     Event.findById(id, (err, eventFound)=>{
-        if(err){ throw err;}
-        else {
-            eventFound.name = body.name || eventFound.name;
-            eventFound.number = body.number || eventFound.number;
-            eventFound.eventCodes = body.eventCodes || eventFound.eventCodes;
-            eventFound.geometry = body.geometry || eventFound.geometry;
+        if(err){ 
+            callback(vars.ERROR_NOTFOUND,null);
+            // throw err;
+        } else {
+            eventFound.host_id = body.host_id || eventFound.host_id;
+            eventFound.title = body.title || eventFound.title;
+            eventFound.discription = body.discription || eventFound.discription;
+            eventFound.subtitle = body.subtitle || eventFound.subtitle;
+            eventFound.latitude = body.latitude || eventFound.latitude;
 
+            eventFound.longitude = body.longitude || eventFound.longitude;
+            eventFound.date = body.date || eventFound.date;
+            eventFound.address = body.address || eventFound.address;
+
+            eventFound.members = body.members || eventFound.members;
+            eventFound.membersIn = body.membersIn || eventFound.membersIn;
+            eventFound.size = body.size || eventFound.size;
+            eventFound.radius = body.radius || eventFound.radius;
+            eventFound.duration = body.duration || eventFound.duration;
+ 
             eventFound.save((err, eventFound) =>{
-                if(err) {callback(err,null); }
+                if(err) {callback(vars.ERROR_UPDATE_FAILED,null); }
                 else{ callback(null, eventFound); }
             })
         }
@@ -109,11 +124,11 @@ module.exports.updateEventById = (id, body, callback) => {
 
 module.exports.deleteEventById = (id, callback) => {
     Event.findById(id, (err, eventFound)=>{
-        if(err){callback({connected:false})}
-        else if(!eventFound){ callback({connected:true, found:false}); }
+        if(err){ callback(vars.ERROR_CONNECTION,null); }
+        else if(!eventFound){ callback(vars.ERROR_NOTFOUND, null);}
         else{eventFound.remove((err, eventFound)=>{
-            if(err){ callback({connected:true, found: true, removed:false})}
-            else{ callback({connected:true, found: true, removed:true})}
+            if(err){ callback(vars.ERROR_REMOVE_FAILED, null); }
+            else{ callback(null, eventFound); }
         })}
     });
 };
