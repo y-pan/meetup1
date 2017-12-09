@@ -84,9 +84,6 @@ module.exports.getEventByName = (name, callback)=>{
     Event.findOne(query, callback);
 };
 
-
-
-
 module.exports.getEventById = (id,callback)=>{
     Event.findById(id, callback); // id refers to _id. When mongodb saves an data object(document) into collection, it creats unique _id within the document, as an additional attribute
 };

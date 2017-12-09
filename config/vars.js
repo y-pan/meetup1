@@ -1,5 +1,5 @@
 module.exports = {
-    isDbLocal:true,    
+    isDbLocal:false,    
     port:3000,
     msgCode:{
         notConnected:0,
@@ -18,7 +18,6 @@ module.exports = {
 
         ERROR_UPDATE_FAILED:"Failed to update data, please try again",
         ERROR_REMOVE_FAILED:"Failed to remove data, please try again",
-
 
 
         SUCCESS:"Operation done sucessfully"
