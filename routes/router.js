@@ -103,10 +103,9 @@ router.post('/event', (req, res) => {
         }
     })
 
-
 });
 
-// ### [4] host get hosting events: http://localhost:3000/api/host_event
+// ### [4] host retrieve all hosting events: http://localhost:3000/api/host_event, http://localhost:3000/api/host_event?host_id=5a2b4f4d166e4d26b8e7cf45
 
 router.post('/host_event', (req, res) => {
     //  {"host_id":"host_id"} */   // obj = req.body  simply using req.body as whole is bad for security concern, but it is lazy way for good code maintainance
@@ -118,51 +117,122 @@ router.post('/host_event', (req, res) => {
         //obj = req.body;   // simply using req.body is not safe
         obj = { "host_id": req.body.host_id };
     }
-
+    console.log("to post event: " + obj.host_id);
     Event.getEventsByQueryJson(obj, (err, data) => {
         if (err) {
             res.json({ "err": vars.MSG.ERROR_CONNECTION });
+            throw err;
         } else {
+           
             if (!data || data.length == 0) {
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+                console.log(vars.MSG.ERROR_NOTFOUND)
             } else {
                 res.json({ "data": data });
+                console.log(data)
+                
             }
         }
     });
 });
 
-// ### [5?] host update a hosting event : http://localhost:3000/api/host_event?id=123abd123jkl
-router.put('/host_event/:id', (req, res) =>{
-    Event.updateEventById(req.params.id, req.body, (err, data) => {
-        if(err){
-            res.json({"err": err}); // model class specified err message already
-        }else{
-            res.json({"data":data});
-        }
-    });
+// new: 
+// ### [5] host update a hosting event by event id : http://localhost:3000/api/host_event?event_id=5a2b5122565205215414ba5f
+/**
+{
+    "title": "Christmas Holiday party 4", "subtitle": "sub2"
+}
+ */
+// enforced title must be unique when updating event details
+router.put('/host_event', (req, res) =>{
+    console.log("[5] req.query.event_id=" + req.query.event_id);
 
+    // check if title already used, don't proceed
+    if(req.body.title){
+        console.log("[5] req.body.title=" + req.body.title);
+        
+        Event.getEventByQueryJson({ "title": req.body.title }, (err, data) => {
+            if (err) {
+                res.json({ "err": vars.MSG.ERROR_CONNECTION });
+            } else {
+                console.log("[5] 1 req.body.title");
+                
+                if (data) {
+                    console.log("[5] 2 req.body.title");
+                    
+                    res.json({ "err": vars.MSG.ERROR_EVENT_TITLE_DUPLICATED });
+                } else {
+                    console.log("[5] 3 req.body.title");
+                    // title is fine
+                    Event.updateEventById(req.query.event_id, req.body, (err, data) => {
+                        if(err){
+                            res.json({"err": err}); // model class specified err message already
+                        }else{
+                            if(!data){
+                                res.json({"err":vars.MSG.ERROR_NOTFOUND});
+                            }else{
+                                res.json({"data":data});
+                            }
+                            
+                        }
+                    });
+                }
+            }
+        });
+    }else{
+        // no change in title
+        Event.updateEventById(req.query.event_id, req.body, (err, data) => {
+            if(err){
+                res.json({"err": err}); // model class specified err message already
+            }else{
+                if(!data){
+                    res.json({"err":vars.MSG.ERROR_NOTFOUND});
+                }else{
+                    res.json({"data":data});
+                }
+            
+            }
+        });
+    }
 });
 
-// ### [6?] host delete a hosting event
-router.delete('/host_event/:id',(req, res)=>{
-    Event.deleteEventById(req.params.id, (err, data)=>{
+
+
+// ### [6] host delete a hosting event by event_id : http://localhost:3000/api/host_event?event_id=5a2b52b1fed30b195843a2f5
+/**
+ * return the original data
+ * 
+ */
+router.delete('/host_event',(req, res)=>{
+    // console.log("[6] req.query.event_id=" + req.query.event_id);
+    
+    Event.deleteEventById(req.query.event_id, (err, data)=>{
+        console.log("[6] delete event: " + err + "\n" + data);
         if(err){ 
-            res.json({"err":err}); // model class specified err message already
-        } else{ 
-            res.json({"data":data}); 
+            res.json({"err":vars.MSG.ERROR_OPERATION}); // model class specified err message already
+            console.log("[6] failed to delete event where event_id = " )
+        } else{    
+            if(!data){
+                console.log("[6] event NOT deleted"  )
+                res.json({"err":vars.MSG.ERROR_NOTFOUND}); 
+            } else{
+                console.log("[6] event now deleted : " + data )
+                res.json({"data":data}); 
+            }
+
         }
     });
 });
 
-
-
+// ------------------------------------------------------------
+// ### for admin to get all users
 router.get('/user', (req, res) => {
 
     User.findAll((err, data) => {
         res.json(data);
     })
 });
+// ### for admin to get all events
 
 router.get('/event', (req, res) => {
     Event.findAll((err, data) => {

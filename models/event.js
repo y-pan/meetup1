@@ -95,40 +95,68 @@ module.exports.getEventById = (id,callback)=>{
 module.exports.updateEventById = (id, body, callback) => {
     Event.findById(id, (err, eventFound)=>{
         if(err){ 
-            callback(vars.ERROR_NOTFOUND,null);
-            // throw err;
+            callback(vars.ERROR_NOTFOUND, null);
+            //throw err;
         } else {
-            eventFound.host_id = body.host_id || eventFound.host_id;
-            eventFound.title = body.title || eventFound.title;
-            eventFound.discription = body.discription || eventFound.discription;
-            eventFound.subtitle = body.subtitle || eventFound.subtitle;
-            eventFound.latitude = body.latitude || eventFound.latitude;
-
-            eventFound.longitude = body.longitude || eventFound.longitude;
-            eventFound.date = body.date || eventFound.date;
-            eventFound.address = body.address || eventFound.address;
-
-            eventFound.members = body.members || eventFound.members;
-            eventFound.membersIn = body.membersIn || eventFound.membersIn;
-            eventFound.size = body.size || eventFound.size;
-            eventFound.radius = body.radius || eventFound.radius;
-            eventFound.duration = body.duration || eventFound.duration;
- 
-            eventFound.save((err, eventFound) =>{
-                if(err) {callback(vars.ERROR_UPDATE_FAILED,null); }
-                else{ callback(null, eventFound); }
-            })
+            if(!eventFound){
+                callback(vars.MSG.ERROR_NOTFOUND, null);
+            }else{
+                eventFound._id = body.host_id || eventFound._id;
+                eventFound.title = body.title || eventFound.title;
+                eventFound.discription = body.discription || eventFound.discription;
+                eventFound.subtitle = body.subtitle || eventFound.subtitle;
+                eventFound.latitude = body.latitude || eventFound.latitude;
+    
+                eventFound.longitude = body.longitude || eventFound.longitude;
+                eventFound.date = body.date || eventFound.date;
+                eventFound.address = body.address || eventFound.address;
+    
+                eventFound.members = body.members || eventFound.members;
+                eventFound.membersIn = body.membersIn || eventFound.membersIn;
+                eventFound.size = body.size || eventFound.size;
+                eventFound.radius = body.radius || eventFound.radius;
+                eventFound.duration = body.duration || eventFound.duration;
+     
+                eventFound.save((err, eventFound) =>{
+                    if(err) {callback(vars.ERROR_UPDATE_FAILED,null); }
+                    else{ callback(null, eventFound); }
+                })
+            }
+            
         }
     })    
 };
 
 module.exports.deleteEventById = (id, callback) => {
     Event.findById(id, (err, eventFound)=>{
-        if(err){ callback(vars.ERROR_CONNECTION,null); }
-        else if(!eventFound){ callback(vars.ERROR_NOTFOUND, null);}
-        else{eventFound.remove((err, eventFound)=>{
-            if(err){ callback(vars.ERROR_REMOVE_FAILED, null); }
-            else{ callback(null, eventFound); }
-        })}
-    });
-};
+        if(err){ 
+            throw err;
+            //callback(vars.ERROR_CONNECTION,null); 
+            console.log(" => 0");
+        } else {
+            if(!eventFound){
+                callback(vars.ERROR_NOTFOUND, null);
+                console.log(" => 1");
+            } else{
+                eventFound.remove((err, eventFound)=>{
+                    if(err){ 
+                        console.log(" => 2");
+                        throw err;
+                        //callback(vars.ERROR_REMOVE_FAILED, null); 
+                    } else {
+                        console.log(" => 3");
+            
+                        callback(null, eventFound); 
+                    }
+                })
+            }
+
+    };
+})};
+
+// if(err){ callback(vars.ERROR_CONNECTION,null); }
+// else if(!eventFound){ callback(vars.ERROR_NOTFOUND, null);}
+// else{eventFound.remove((err, eventFound)=>{
+//     if(err){ callback(vars.ERROR_REMOVE_FAILED, null); }
+//     else{ callback(null, eventFound); }
+// })}
