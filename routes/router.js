@@ -36,7 +36,10 @@ router.post('/user/register', (req, res, next) => {
                 // ok to use this email, clientside should check password valid(not empty, ...)
                 User.addUser(newUser, (err, data) => {
                     if (err) { res.json({ "err": vars.MSG.ERROR_OPERATIO }); }
-                    else { res.json({ "data": data }); }
+                    else { 
+                        data.password = ""; // empty password for security purpose
+                        res.json({ "data": data }); 
+                    }
                 });
             }
         }
@@ -62,14 +65,14 @@ router.post("/user/login", (req, res) => {
             if (!data) {
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
             } else {
+                data.password = ""; // empty password for security purpose
                 res.json({ "data": data });
             }
         }
     })
-
 })
 
-// ### [2.2] GET /user?id=xxxxxxxxxx to get all user info (except for password)
+// ### [2.2] https://meetus01.herokuapp.com/api/user?id=5a3005f4a0b4fd00046e940d (except for password, which is erased, but still there is a field call "password" in json)
 
 router.get("/user", (req, res) => {
     let obj = {};
@@ -125,11 +128,9 @@ router.post('/event', (req, res) => {
                         }
                     }
                 });
-
             }
         }
     })
-
 });
 
 // ### [4] host retrieve all hosting events: http://localhost:3000/api/host_event, http://localhost:3000/api/host_event?host_id=5a2b4f4d166e4d26b8e7cf45
