@@ -69,15 +69,16 @@ router.post("/user/login", (req, res) => {
 
 })
 
-// ### [2.2] GET /user/{id} to get all user info (except for password)
+// ### [2.2] GET /user?id=xxxxxxxxxx to get all user info (except for password)
 
 router.get("/user", (req, res) => {
     let obj = {};
     let _id = req.query.id;
     if (_id) {          // post via url
         obj = { "_id":_id };
-    } else {                          // post via body 
-        obj = { "_id": req.body._id }
+    } else {
+        res.json({"err": vars.MSG.ERROR_NOTFOUND});
+        return;
     }
 
     User.getUserByQueryJson(obj, (err, data) => {
@@ -87,10 +88,11 @@ router.get("/user", (req, res) => {
             if (!data) {
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
             } else {
+                data.password = "";  // remove password for security purpose, UI don't want to show it
                 res.json({ "data": data });
             }
         }
-    })
+    });
 
 })
 
