@@ -69,6 +69,31 @@ router.post("/user/login", (req, res) => {
 
 })
 
+// ### [2.2] GET /user/{id} to get all user info (except for password)
+
+router.get("/user", (req, res) => {
+    let obj = {};
+    let _id = req.query.id;
+    if (_id) {          // post via url
+        obj = { "_id":_id };
+    } else {                          // post via body 
+        obj = { "_id": req.body._id }
+    }
+
+    User.getUserByQueryJson(obj, (err, data) => {
+        if (err) {
+            res.json({ "err": vars.MSG.ERROR_CONNECTION });
+        } else {
+            if (!data) {
+                res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+            } else {
+                res.json({ "data": data });
+            }
+        }
+    })
+
+})
+
 // ### [3] host create event: http://localhost:3000/api/event
 router.post('/event', (req, res) => {
     let newEvent = new Event(req.body);
