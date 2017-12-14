@@ -284,6 +284,30 @@ router.post('/event/subscribe',(req, res)=>{
     })
 });
 
+// 2.5 GET: [api-root]/event?id=2312312
+router.get('/event', (req, res) => {
+    
+    let _id = req.query.id;
+    if(!_id){
+        res.json({ "err": vars.MSG.ERROR_INVALID_REQUEST });
+        return;
+    }
+
+    // console.log(" search:" +lat + ", "+lon + ", "+dis);
+    Event.getEventByQueryJson({"_id":_id}, (err, data) => {
+        if (err) {
+            res.json({ "err": vars.MSG.ERROR_CONNECTION });
+            throw err;
+        } else {
+            if (!data || data.length == 0) {
+                res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+            } else {
+                
+                res.json({ "data": data });
+            }
+        }
+    });
+});
 // new: 
 // ### [5] host update a hosting event by event id : http://localhost:3000/api/host_event?event_id=5a2b5122565205215414ba5f
 /**
