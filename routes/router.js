@@ -308,6 +308,30 @@ router.get('/event', (req, res) => {
         }
     });
 });
+
+// 2.6 GET /guest_event?id=1232abc     to get my attended event
+router.get('/guest_event', (req, res) => {
+    
+    let guest_id = req.query.id;
+    if(!guest_id){
+        res.json({ "err": vars.MSG.ERROR_INVALID_REQUEST });
+        return;
+    }
+
+    // console.log(" search:" +lat + ", "+lon + ", "+dis);
+    Event.getEventByQueryJson({"members":guest_id}, (err, data) => {
+        if (err) {
+            res.json({ "err": vars.MSG.ERROR_CONNECTION });
+            throw err;
+        } else {
+            if (!data || data.length == 0) {
+                res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+            } else {
+                res.json({ "data": data });
+            }
+        }
+    });
+});
 // new: 
 // ### [5] host update a hosting event by event id : http://localhost:3000/api/host_event?event_id=5a2b5122565205215414ba5f
 /**
