@@ -34,9 +34,9 @@ router.get("/user", (req, res) => {
     let obj = {};
     let _id = req.query.id;
     if (_id) {          // post via url
-        obj = { "_id":_id };
+        obj = { "_id": _id };
     } else {
-        res.json({"err": vars.MSG.ERROR_NOTFOUND});
+        res.json({ "err": vars.MSG.ERROR_NOTFOUND });
         return;
     }
 
@@ -72,9 +72,9 @@ router.post('/user/register', (req, res, next) => {
                 // ok to use this email, clientside should check password valid(not empty, ...)
                 User.addUser(newUser, (err, data) => {
                     if (err) { res.json({ "err": vars.MSG.ERROR_OPERATIO }); }
-                    else { 
+                    else {
                         data.password = ""; // empty password for security purpose
-                        res.json({ "data": data }); 
+                        res.json({ "data": data });
                     }
                 });
             }
@@ -164,14 +164,14 @@ router.post('/host_event', (req, res) => {
             res.json({ "err": vars.MSG.ERROR_CONNECTION });
             throw err;
         } else {
-           
+
             if (!data || data.length == 0) {
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
                 console.log(vars.MSG.ERROR_NOTFOUND)
             } else {
                 res.json({ "data": data });
                 console.log(data)
-                
+
             }
         }
     });
@@ -195,15 +195,15 @@ router.get('/event/search', (req, res) => {
                 // console.log(vars.MSG.ERROR_NOTFOUND)
             } else {
                 //console.log(data)
-                data.forEach(d =>{
-                    if(d.suspended == false && d.active == true){
-                        let ds = lib.getDistanceFromLatLonInMeter(lat,lon,d.latitude,d.longitude);
+                data.forEach(d => {
+                    if (d.suspended == false && d.active == true) {
+                        let ds = lib.getDistanceFromLatLonInMeter(lat, lon, d.latitude, d.longitude);
                         // console.log("["+lat+","+lon+"]+["+d.latitude+","+d.longitude+"] =>" + ds);
-                        if(ds <= dis){
+                        if (ds <= dis) {
                             events.push(d);
                         }
                     }
-                    
+
                 })
                 res.json({ "data": events });
                 // console.log("total:" + events.length +"/"+data.length + " within" + dis);
@@ -213,11 +213,11 @@ router.get('/event/search', (req, res) => {
 });
 
 // 2.4 POST: [api-root]/event/subscribe    ?event_id=1234123&user_id=1231111
-router.post('/event/subscribe',(req, res)=>{
+router.post('/event/subscribe', (req, res) => {
 
     let event_id = req.body.event_id;
     let user_id = req.body.user_id;
-    if(!event_id || !user_id){
+    if (!event_id || !user_id) {
         res.json({ "err": vars.MSG.ERROR_INVALID_REQUEST });
         return;
     }
@@ -231,7 +231,7 @@ router.post('/event/subscribe',(req, res)=>{
             } else {
                 // so at this point, user exists
                 // then check event exist
-                Event.getEventByQueryJson({"_id":event_id}, (err, data) => {
+                Event.getEventByQueryJson({ "_id": event_id }, (err, data) => {
                     if (err) {
                         res.json({ "err": vars.MSG.ERROR_CONNECTION });
                         throw err;
@@ -241,44 +241,44 @@ router.post('/event/subscribe',(req, res)=>{
                             // console.log(vars.MSG.ERROR_NOTFOUND)
                         } else {
                             //so at this point event exist
-                            if(data.active == false || data.suspended == true){
+                            if (data.active == false || data.suspended == true) {
                                 res.json({ "err": vars.MSG.ERROR_EVENT_NOT_AVAILABLE });
                                 return;
                             }
-                            if(data.host_id == user_id){
+                            if (data.host_id == user_id) {
                                 res.json({ "err": vars.MSG.ERROR_USER_NO_NEED_SUBSCRIBE_OWN_EVENT });
                                 return;
                             }
                             console.log(data);
-                            let members= data.members;
+                            let members = data.members;
 
-                            for(let i=0; i<members.length; i++){
-                                
-                                if(members[i] == user_id){
-                                    console.log(members[i] +"=YES="+ user_id)
-                                    res.json({"data":data}); // user_id is already a member, no need to update db, just return data
+                            for (let i = 0; i < members.length; i++) {
+
+                                if (members[i] == user_id) {
+                                    console.log(members[i] + "=YES=" + user_id)
+                                    res.json({ "data": data }); // user_id is already a member, no need to update db, just return data
                                     return;
                                 }
                             }
 
                             data.members.push(user_id);
-                            Event.updateEvent(data,(err,newData)=>{
-                                if(err){
+                            Event.updateEvent(data, (err, newData) => {
+                                if (err) {
                                     res.json({ "err": vars.MSG.ERROR_CONNECTION });
                                     throw err;
-                                }else{
-                                    if (!data || data.length == 0) {
+                                } else {
+                                    if (!newData || newData.length == 0) {
                                         res.json({ "err": vars.MSG.ERROR_NOTFOUND });
                                         // console.log(vars.MSG.ERROR_NOTFOUND)
                                     } else {
-                                        res.json({"data":newData});
+                                        res.json({ "data": newData });
                                     }
                                 }
                             });
                         }
                     }
                 });
-                
+
             }// end of User.getUserByQueryJson()
         }
     })
@@ -286,15 +286,15 @@ router.post('/event/subscribe',(req, res)=>{
 
 // 2.5 GET: [api-root]/event?id=2312312
 router.get('/event', (req, res) => {
-    
+
     let _id = req.query.id;
-    if(!_id){
+    if (!_id) {
         res.json({ "err": vars.MSG.ERROR_INVALID_REQUEST });
         return;
     }
 
     // console.log(" search:" +lat + ", "+lon + ", "+dis);
-    Event.getEventByQueryJson({"_id":_id}, (err, data) => {
+    Event.getEventByQueryJson({ "_id": _id }, (err, data) => {
         if (err) {
             res.json({ "err": vars.MSG.ERROR_CONNECTION });
             throw err;
@@ -302,7 +302,7 @@ router.get('/event', (req, res) => {
             if (!data || data.length == 0) {
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
             } else {
-                
+
                 res.json({ "data": data });
             }
         }
@@ -311,15 +311,15 @@ router.get('/event', (req, res) => {
 
 // 2.6 GET /guest_event?id=1232abc     to get my attended event
 router.get('/guest_event', (req, res) => {
-    
+
     let guest_id = req.query.id;
-    if(!guest_id){
+    if (!guest_id) {
         res.json({ "err": vars.MSG.ERROR_INVALID_REQUEST });
         return;
     }
 
     // console.log(" search:" +lat + ", "+lon + ", "+dis);
-    Event.getEventByQueryJson({"members":guest_id}, (err, data) => {
+    Event.getEventByQueryJson({ "members": guest_id }, (err, data) => {
         if (err) {
             res.json({ "err": vars.MSG.ERROR_CONNECTION });
             throw err;
@@ -332,89 +332,110 @@ router.get('/guest_event', (req, res) => {
         }
     });
 });
-// new: 
-// ### [5] host update a hosting event by event id : http://localhost:3000/api/host_event?event_id=5a2b5122565205215414ba5f
-/**
-{
-    "title": "Christmas Holiday party 4", "subtitle": "sub2"
-}
- */
-// enforced title must be unique when updating event details   
-// use post
-router.put('/host_event', (req, res) =>{
-    console.log("[5] req.query.event_id=" + req.query.event_id);
 
-    // check if title already used, don't proceed
-    if(req.body.title){
-        console.log("[5] req.body.title=" + req.body.title);
-        
-        Event.getEventByQueryJson({ "title": req.body.title }, (err, data) => {
-            if (err) {
-                res.json({ "err": vars.MSG.ERROR_CONNECTION });
-            } else {
-                console.log("[5] 1 req.body.title");
-                
-                if (data) {
-                    console.log("[5] 2 req.body.title");
-                    
-                    res.json({ "err": vars.MSG.ERROR_EVENT_TITLE_DUPLICATED });
-                } else {
-                    console.log("[5] 3 req.body.title");
-                    // title is fine
-                    Event.updateEventById(req.query.event_id, req.body, (err, data) => {
-                        if(err){
-                            res.json({"err": err}); // model class specified err message already
-                        }else{
-                            if(!data){
-                                res.json({"err":vars.MSG.ERROR_NOTFOUND});
-                            }else{
-                                res.json({"data":data});
-                            }
-                            
-                        }
-                    });
-                }
-            }
-        });
-    }else{
-        // no change in title
-        Event.updateEventById(req.query.event_id, req.body, (err, data) => {
-            if(err){
-                res.json({"err": err}); // model class specified err message already
-            }else{
-                if(!data){
-                    res.json({"err":vars.MSG.ERROR_NOTFOUND});
-                }else{
-                    res.json({"data":data});
-                }
-            
-            }
-        });
+
+// 2.7 POST: [api-root]/event/update
+
+router.post('/event/update', (req, res) => {
+
+    if (!req.body.title) {
+        res.json({ "err": vars.MSG.ERROR_INVALID_REQUEST });
+        return;
     }
+    // see if title confilict
+    Event.getEventByQueryJson({ "title": req.body.title }, (err, data) => {
+
+        if (err) {
+            res.json({ "err": vars.MSG.ERROR_CONNECTION });
+            return;
+        } else {
+            if (data) {
+
+                if (req.body.title == data.title && req.body._id != data._id) { // other event already has same title, not allowed to duplicate title
+                    res.json({ "err": vars.MSG.ERROR_EVENT_TITLE_DUPLICATED });
+                    return;
+                }
+            }
+            // OK TO UPDATE
+            Event.getEventByQueryJson({ "_id": req.body._id }, (err, udata) => {
+                if (err) {
+                    res.json({ "err": vars.MSG.ERROR_CONNECTION });
+                    return;
+                } else {
+                    if (!udata || udata.length == 0) {
+                        res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+                    } else {
+                        // FIND the record, update it
+                        // udata.host_id = req.body.host_id || udata.host_id;
+                        udata.title = req.body.title || udata.title;
+                        udata.description = req.body.description || udata.description;
+                        udata.subtitle = req.body.subtitle || udata.subtitle;
+                        udata.latitude = req.body.latitude || udata.latitude;
+
+                        udata.longitude = req.body.longitude || udata.longitude;
+                        udata.date = req.body.date || udata.date;
+                        udata.address = req.body.address || udata.address;
+
+                        udata.members = req.body.members || udata.members;
+                        udata.membersIn = req.body.membersIn || udata.membersIn;
+                        udata.size = req.body.size || udata.size;
+                        udata.radius = req.body.radius || udata.radius;
+                        udata.duration = req.body.duration || udata.duration;
+
+                        udata.active = req.body.active || udata.active;
+                        udata.suspended = req.body.suspended || udata.suspended;
+
+                        Event.updateEvent(udata, (err, newudata) => {
+                            if (err) {
+                                res.json({ "err": vars.MSG.ERROR_CONNECTION });
+                            } else {
+                                if (!newudata || newudata.length == 0) {
+                                    res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+                                } else {
+                                    console.log("======= d 2 ======= updated \n" + newudata);
+                                    res.json({ "data": newudata });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+
+
+
+        }
+    });
 });
 
+// 3.0 GET : [api-root]/events     get all events
 
+router.get('/events', (req, res) => {
+    Event.findAll((err, data) => {
+        res.json(data);
+    })
+});
 
 // ### [6] host delete a hosting event by event_id : http://localhost:3000/api/host_event?event_id=5a2b52b1fed30b195843a2f5
 /**
  * return the original data
  * 
  */
-router.delete('/host_event',(req, res)=>{
+router.delete('/host_event', (req, res) => {
     // console.log("[6] req.query.event_id=" + req.query.event_id);
-    
-    Event.deleteEventById(req.query.event_id, (err, data)=>{
+
+    Event.deleteEventById(req.query.event_id, (err, data) => {
         console.log("[6] delete event: " + err + "\n" + data);
-        if(err){ 
-            res.json({"err":vars.MSG.ERROR_OPERATION}); // model class specified err message already
-            console.log("[6] failed to delete event where event_id = " )
-        } else{    
-            if(!data){
-                console.log("[6] event NOT deleted"  )
-                res.json({"err":vars.MSG.ERROR_NOTFOUND}); 
-            } else{
-                console.log("[6] event now deleted : " + data )
-                res.json({"data":data}); 
+        if (err) {
+            res.json({ "err": vars.MSG.ERROR_OPERATION }); // model class specified err message already
+            console.log("[6] failed to delete event where event_id = ")
+        } else {
+            if (!data) {
+                console.log("[6] event NOT deleted")
+                res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+            } else {
+                console.log("[6] event now deleted : " + data)
+                res.json({ "data": data });
             }
 
         }
@@ -422,13 +443,7 @@ router.delete('/host_event',(req, res)=>{
 });
 
 
-// ### for admin to get all events
 
-router.get('/event', (req, res) => {
-    Event.findAll((err, data) => {
-        res.json(data);
-    })
-});
 
 
 //http://localhost:5000/api/user_gps?email=panyunkui@gmail.com&lat=-123.111&lon=111.000&code=abc

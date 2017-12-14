@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 const EventSchema = mongoose.Schema({
     host_id:{type:String, require:true},
     title:{type:String, require:true},
-    discription:{type:String},
+    description:{type:String},
     subtitle:{type:String},
     latitude:{type:Number},
     longitude:{type:Number},
@@ -46,7 +46,9 @@ module.exports.addEvent = (newEvent, callback) =>{
     newEvent.save(callback); // newEvent is a mongoose object
 };
 module.exports.updateEvent = (newEvent, callback) =>{
+    console.log("-- in mongoose : "+newEvent);
     newEvent.save(callback); // newEvent is a mongoose object
+    // newEvent.findOneAndUpdate({"_id":newEvent._id},newEvent,callback);
 };
 module.exports.getEventsByQueryJson = (jsonObject, callback)=>{
     const query = jsonObject;
@@ -93,40 +95,6 @@ module.exports.getEventById = (id,callback)=>{
 };
 
 
-module.exports.updateEventById = (id, body, callback) => {
-    Event.findById(id, (err, eventFound)=>{
-        if(err){ 
-            callback(vars.ERROR_NOTFOUND, null);
-            //throw err;
-        } else {
-            if(!eventFound){
-                callback(vars.MSG.ERROR_NOTFOUND, null);
-            }else{
-                eventFound._id = body.host_id || eventFound._id;
-                eventFound.title = body.title || eventFound.title;
-                eventFound.discription = body.discription || eventFound.discription;
-                eventFound.subtitle = body.subtitle || eventFound.subtitle;
-                eventFound.latitude = body.latitude || eventFound.latitude;
-    
-                eventFound.longitude = body.longitude || eventFound.longitude;
-                eventFound.date = body.date || eventFound.date;
-                eventFound.address = body.address || eventFound.address;
-    
-                eventFound.members = body.members || eventFound.members;
-                eventFound.membersIn = body.membersIn || eventFound.membersIn;
-                eventFound.size = body.size || eventFound.size;
-                eventFound.radius = body.radius || eventFound.radius;
-                eventFound.duration = body.duration || eventFound.duration;
-     
-                eventFound.save((err, eventFound) =>{
-                    if(err) {callback(vars.ERROR_UPDATE_FAILED,null); }
-                    else{ callback(null, eventFound); }
-                })
-            }
-            
-        }
-    })    
-};
 
 module.exports.deleteEventById = (id, callback) => {
     Event.findById(id, (err, eventFound)=>{
@@ -161,3 +129,44 @@ module.exports.deleteEventById = (id, callback) => {
 //     if(err){ callback(vars.ERROR_REMOVE_FAILED, null); }
 //     else{ callback(null, eventFound); }
 // })}
+
+
+
+module.exports.updateEventById = (id, body, callback) => {
+    Event.findById(id, (err, eventFound)=>{
+        if(err){ 
+            callback(vars.ERROR_NOTFOUND, null);
+            //throw err;
+        } else {
+            if(!eventFound){
+                callback(vars.MSG.ERROR_NOTFOUND, null);
+            }else{
+                eventFound.host_id = body.host_id || eventFound.host_id;
+                eventFound.title = body.title || eventFound.title;
+                eventFound.discription = body.discription || eventFound.discription;
+                eventFound.subtitle = body.subtitle || eventFound.subtitle;
+                eventFound.latitude = body.latitude || eventFound.latitude;
+    
+                eventFound.longitude = body.longitude || eventFound.longitude;
+                eventFound.date = body.date || eventFound.date;
+                eventFound.address = body.address || eventFound.address;
+    
+                eventFound.members = body.members || eventFound.members;
+                eventFound.membersIn = body.membersIn || eventFound.membersIn;
+                eventFound.size = body.size || eventFound.size;
+                eventFound.radius = body.radius || eventFound.radius;
+                eventFound.duration = body.duration || eventFound.duration;
+                
+                eventFound.active = body.active || eventFound.active;
+                eventFound.suspended = body.suspended || eventFound.suspended;
+                
+                
+                eventFound.save((err, eventFound) =>{
+                    if(err) {callback(vars.ERROR_UPDATE_FAILED,null); }
+                    else{ callback(null, eventFound); }
+                })
+            }
+            
+        }
+    })    
+};
