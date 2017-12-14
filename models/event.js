@@ -24,7 +24,9 @@ const EventSchema = mongoose.Schema({
     size:{type:Number},    /* max audience size */
     radius:{type:Number},   /* radius, within radius will be marked as attended, within valid duration */
     duration:{type:Number}  /* number of hours from the start date, so end-date = start-data + duration */
-
+    
+    ,active:{type:Boolean, default:true}
+    ,suspended:{type:Boolean, default:false}
 },{collection:'event'});
 // eventStartTime:{type: Date, default: Date.now},
 

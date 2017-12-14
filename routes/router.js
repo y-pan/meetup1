@@ -1,6 +1,6 @@
 const vars = require('../config/vars');
 const secret = require('../config/secret');          // secret info like db connection(has username and pass)
-
+const lib = require('../Lib/lib1');
 const express = require('express');
 const router = express.Router();
 //const passport = require('passport');
@@ -18,14 +18,50 @@ router.get('/', (req, res) => { res.send("api version: 1"); });
 //res.json({ "adminAuthenticated": true });
 //});  
 
-// ### [1] Register : req.body is better maintainable, just need to modify model and done
+
+// 1.1 GET:  [api-root]/user 
+// for admin to get all users
+router.get('/users', (req, res) => {
+    User.findAll((err, data) => {
+        res.json(data);
+    })
+});
+
+// 1.2  GET:  [api-root]/user?id=xxxxxxxxxxxxxxxx
+// https://meetus01.herokuapp.com/api/user?id=5a3005f4a0b4fd00046e940d (except for password, which is erased, but still there is a field call "password" in json)
+
+router.get("/user", (req, res) => {
+    let obj = {};
+    let _id = req.query.id;
+    if (_id) {          // post via url
+        obj = { "_id":_id };
+    } else {
+        res.json({"err": vars.MSG.ERROR_NOTFOUND});
+        return;
+    }
+
+    User.getUserByQueryJson(obj, (err, data) => {
+        if (err) {
+            res.json({ "err": vars.MSG.ERROR_CONNECTION });
+        } else {
+            if (!data) {
+                res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+            } else {
+                data.password = "";  // remove password for security purpose, UI don't want to show it
+                res.json({ "data": data });
+            }
+        }
+    });
+});
+
+// 1.3 POST:  [api-root]/user/register
+// Register : req.body is better maintainable, just need to modify model and done
 router.post('/user/register', (req, res, next) => {
     let newUser;
     newUser = new User(req.body);
     console.log(newUser.email);
 
     // check if email already used, don't proceed
-
     User.getUserByQueryJson({ "email": newUser.email }, (err, data) => {
         if (err) {
             res.json({ "err": vars.MSG.ERROR_CONNECTION });
@@ -46,7 +82,8 @@ router.post('/user/register', (req, res, next) => {
     })
 });
 
-// ### [2] login: http://localhost:3000/api/user/login?email=panyunkui2@gmail.com&password=111
+// 1.4a|b POST: [api-root]/user/login
+// http://localhost:3000/api/user/login?email=panyunkui2@gmail.com&password=111
 router.post("/user/login", (req, res) => {
     let obj = {};
     let email = req.query.email;
@@ -72,34 +109,8 @@ router.post("/user/login", (req, res) => {
     })
 })
 
-// ### [2.2] https://meetus01.herokuapp.com/api/user?id=5a3005f4a0b4fd00046e940d (except for password, which is erased, but still there is a field call "password" in json)
-
-router.get("/user", (req, res) => {
-    let obj = {};
-    let _id = req.query.id;
-    if (_id) {          // post via url
-        obj = { "_id":_id };
-    } else {
-        res.json({"err": vars.MSG.ERROR_NOTFOUND});
-        return;
-    }
-
-    User.getUserByQueryJson(obj, (err, data) => {
-        if (err) {
-            res.json({ "err": vars.MSG.ERROR_CONNECTION });
-        } else {
-            if (!data) {
-                res.json({ "err": vars.MSG.ERROR_NOTFOUND });
-            } else {
-                data.password = "";  // remove password for security purpose, UI don't want to show it
-                res.json({ "data": data });
-            }
-        }
-    });
-
-})
-
-// ### [3] host create event: http://localhost:3000/api/event
+// 2.1 POST: [api-root]/api/event   
+// host create event: http://localhost:3000/api/event
 router.post('/event', (req, res) => {
     let newEvent = new Event(req.body);
     console.log(newEvent);
@@ -133,7 +144,9 @@ router.post('/event', (req, res) => {
     })
 });
 
-// ### [4] host retrieve all hosting events: http://localhost:3000/api/host_event, http://localhost:3000/api/host_event?host_id=5a2b4f4d166e4d26b8e7cf45
+// 2.2 POST: [api-root]/host_event     
+// host get all hosting events
+// http://localhost:3000/api/host_event, http://localhost:3000/api/host_event?host_id=5a2b4f4d166e4d26b8e7cf45
 
 router.post('/host_event', (req, res) => {
     //  {"host_id":"host_id"} */   // obj = req.body  simply using req.body as whole is bad for security concern, but it is lazy way for good code maintainance
@@ -164,6 +177,43 @@ router.post('/host_event', (req, res) => {
     });
 });
 
+// todo 2.3 -> 2.7 in doc
+
+// todo: !!!  search event by _id    /host_event
+// 43.6753089,-79.45912679999999,
+router.get('/event/search', (req, res) => {
+
+    let lat = req.query.latitude;
+    let lon = req.query.longitude;
+    let dis = req.query.distance;
+    let events = [];
+    // console.log(" search:" +lat + ", "+lon + ", "+dis);
+    Event.getEventsByQueryJson({}, (err, data) => {
+        if (err) {
+            res.json({ "err": vars.MSG.ERROR_CONNECTION });
+            throw err;
+        } else {
+            if (!data || data.length == 0) {
+                res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+                // console.log(vars.MSG.ERROR_NOTFOUND)
+            } else {
+                //console.log(data)
+                data.forEach(d =>{
+                    if(d.suspended == false && d.active == true){
+                        let ds = lib.getDistanceFromLatLonInMeter(lat,lon,d.latitude,d.longitude);
+                        // console.log("["+lat+","+lon+"]+["+d.latitude+","+d.longitude+"] =>" + ds);
+                        if(ds <= dis){
+                            events.push(d);
+                        }
+                    }
+                    
+                })
+                res.json({ "data": events });
+                // console.log("total:" + events.length +"/"+data.length + " within" + dis);
+            }
+        }
+    });
+});
 // new: 
 // ### [5] host update a hosting event by event id : http://localhost:3000/api/host_event?event_id=5a2b5122565205215414ba5f
 /**
@@ -171,7 +221,8 @@ router.post('/host_event', (req, res) => {
     "title": "Christmas Holiday party 4", "subtitle": "sub2"
 }
  */
-// enforced title must be unique when updating event details
+// enforced title must be unique when updating event details   
+// use post
 router.put('/host_event', (req, res) =>{
     console.log("[5] req.query.event_id=" + req.query.event_id);
 
@@ -252,14 +303,7 @@ router.delete('/host_event',(req, res)=>{
     });
 });
 
-// ------------------------------------------------------------
-// ### for admin to get all users
-router.get('/user', (req, res) => {
 
-    User.findAll((err, data) => {
-        res.json(data);
-    })
-});
 // ### for admin to get all events
 
 router.get('/event', (req, res) => {
