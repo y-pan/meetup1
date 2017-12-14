@@ -45,7 +45,9 @@ module.exports.findAll = (callback) =>{
 module.exports.addEvent = (newEvent, callback) =>{
     newEvent.save(callback); // newEvent is a mongoose object
 };
-
+module.exports.updateEvent = (newEvent, callback) =>{
+    newEvent.save(callback); // newEvent is a mongoose object
+};
 module.exports.getEventsByQueryJson = (jsonObject, callback)=>{
     const query = jsonObject;
     Event.find(query, callback); 

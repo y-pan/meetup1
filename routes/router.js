@@ -177,10 +177,7 @@ router.post('/host_event', (req, res) => {
     });
 });
 
-// todo 2.3 -> 2.7 in doc
-
-// todo: !!!  search event by _id    /host_event
-// 43.6753089,-79.45912679999999,
+// 2.3 GET:  [api-root]/event/search?latitude=43.6753089&longitude=-79.459126&distance=50
 router.get('/event/search', (req, res) => {
 
     let lat = req.query.latitude;
@@ -214,6 +211,79 @@ router.get('/event/search', (req, res) => {
         }
     });
 });
+
+// 2.4 POST: [api-root]/event/subscribe    ?event_id=1234123&user_id=1231111
+router.post('/event/subscribe',(req, res)=>{
+
+    let event_id = req.body.event_id;
+    let user_id = req.body.user_id;
+    if(!event_id || !user_id){
+        res.json({ "err": vars.MSG.ERROR_INVALID_REQUEST });
+        return;
+    }
+    // 1. check if user_id valid
+    User.getUserByQueryJson({ "_id": user_id }, (err, data) => {
+        if (err) {
+            res.json({ "err": vars.MSG.ERROR_CONNECTION });
+        } else {
+            if (!data || data.length == 0) {
+                res.json({ "err": vars.MSG.ERROR_USER_NOTFOUND });
+            } else {
+                // so at this point, user exists
+                // then check event exist
+                Event.getEventByQueryJson({"_id":event_id}, (err, data) => {
+                    if (err) {
+                        res.json({ "err": vars.MSG.ERROR_CONNECTION });
+                        throw err;
+                    } else {
+                        if (!data || data.length == 0) {
+                            res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+                            // console.log(vars.MSG.ERROR_NOTFOUND)
+                        } else {
+                            //so at this point event exist
+                            if(data.active == false || data.suspended == true){
+                                res.json({ "err": vars.MSG.ERROR_EVENT_NOT_AVAILABLE });
+                                return;
+                            }
+                            if(data.host_id == user_id){
+                                res.json({ "err": vars.MSG.ERROR_USER_NO_NEED_SUBSCRIBE_OWN_EVENT });
+                                return;
+                            }
+                            console.log(data);
+                            let members= data.members;
+
+                            for(let i=0; i<members.length; i++){
+                                
+                                if(members[i] == user_id){
+                                    console.log(members[i] +"=YES="+ user_id)
+                                    res.json({"data":data}); // user_id is already a member, no need to update db, just return data
+                                    return;
+                                }
+                            }
+
+                            data.members.push(user_id);
+                            Event.updateEvent(data,(err,newData)=>{
+                                if(err){
+                                    res.json({ "err": vars.MSG.ERROR_CONNECTION });
+                                    throw err;
+                                }else{
+                                    if (!data || data.length == 0) {
+                                        res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+                                        // console.log(vars.MSG.ERROR_NOTFOUND)
+                                    } else {
+                                        res.json({"data":newData});
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+                
+            }// end of User.getUserByQueryJson()
+        }
+    })
+});
+
 // new: 
 // ### [5] host update a hosting event by event id : http://localhost:3000/api/host_event?event_id=5a2b5122565205215414ba5f
 /**
