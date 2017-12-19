@@ -416,15 +416,16 @@ router.get('/events', (req, res) => {
     })
 });
 
-// ### [6] host delete a hosting event by event_id : http://localhost:3000/api/host_event?event_id=5a2b52b1fed30b195843a2f5
+// 3.1 DELETE event by event id: [api-root]/event?id=xxx : http://localhost:3000/api/host_event?event_id=5a2b52b1fed30b195843a2f5
 /**
  * return the original data
  * 
  */
-router.delete('/host_event', (req, res) => {
+
+router.delete('/event', (req, res) => {
     // console.log("[6] req.query.event_id=" + req.query.event_id);
 
-    Event.deleteEventById(req.query.event_id, (err, data) => {
+    Event.deleteEventById(req.query.id, (err, data) => {
         console.log("[6] delete event: " + err + "\n" + data);
         if (err) {
             res.json({ "err": vars.MSG.ERROR_OPERATION }); // model class specified err message already
