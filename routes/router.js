@@ -400,10 +400,6 @@ router.post('/event/update', (req, res) => {
                     }
                 }
             });
-
-
-
-
         }
     });
 });
@@ -416,29 +412,39 @@ router.get('/events', (req, res) => {
     })
 });
 
-// 3.1 DELETE event by event id: [api-root]/event?id=xxx : http://localhost:3000/api/host_event?event_id=5a2b52b1fed30b195843a2f5
+// 3.1a DELETE : [api-root]/event?id=xxx     admin/host delete event by event id
+//https://meetus01.herokuapp.com/api/event?id=5a2754d25aa8e623dcfc2038
 /**
  * return the original data
  * 
  */
 
 router.delete('/event', (req, res) => {
-    // console.log("[6] req.query.event_id=" + req.query.event_id);
-
     Event.deleteEventById(req.query.id, (err, data) => {
-        console.log("[6] delete event: " + err + "\n" + data);
         if (err) {
             res.json({ "err": vars.MSG.ERROR_OPERATION }); // model class specified err message already
-            console.log("[6] failed to delete event where event_id = ")
         } else {
             if (!data) {
-                console.log("[6] event NOT deleted")
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
             } else {
-                console.log("[6] event now deleted : " + data)
+                console.log("event deleted : " + data)
                 res.json({ "data": data });
             }
-
+        }
+    });
+});
+// 3.1b POST : [api-root]/event/delete?id=xxx    admin/host delete event by event id (backup api)
+router.post('/event/delete', (req, res) => {
+    Event.deleteEventById(req.query.id, (err, data) => {
+        if (err) {
+            res.json({ "err": vars.MSG.ERROR_OPERATION }); // model class specified err message already
+        } else {
+            if (!data) {
+                res.json({ "err": vars.MSG.ERROR_NOTFOUND });
+            } else {
+                console.log("event deleted : " + data)
+                res.json({ "data": data });
+            }
         }
     });
 });
