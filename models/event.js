@@ -15,7 +15,7 @@ const EventSchema = mongoose.Schema({
     subtitle:{type:String},
     latitude:{type:Number},
     longitude:{type:Number},
-    date:{type:String}, /* start date of event */
+    date:{type:String}, /* start date of event, host/admin will postpond event by changing date, search event might need to filter if date expired or not */
     address:{type:String},
 
     members:{type:[String]},  /* members' _id who are enrolled to attend event */
@@ -27,6 +27,7 @@ const EventSchema = mongoose.Schema({
     
     ,active:{type:Boolean, default:true}
     ,suspended:{type:Boolean, default:false}
+
 },{collection:'event'});
 // eventStartTime:{type: Date, default: Date.now},
 

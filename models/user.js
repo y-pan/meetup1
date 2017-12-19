@@ -13,6 +13,8 @@ const UserSchema = mongoose.Schema({
     eventCodes:{type:[String]},
     loc: { type: [Number]}
     
+    ,isAdmin:{type:Boolean, default:false}
+
 },{collection:'user'});
 
 const User = module.exports = mongoose.model('user',UserSchema);

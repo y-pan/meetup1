@@ -145,7 +145,7 @@ router.post('/event', (req, res) => {
 });
 
 // 2.2 POST: [api-root]/host_event     
-// host get all hosting events
+// Host get all self-hosting events 
 // http://localhost:3000/api/host_event, http://localhost:3000/api/host_event?host_id=5a2b4f4d166e4d26b8e7cf45
 
 router.post('/host_event', (req, res) => {
