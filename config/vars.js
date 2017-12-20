@@ -28,9 +28,7 @@ module.exports = {
 
         SUCCESS:"Operation done sucessfully"
     }
-    
-    
-    
+ 
 }
 
 // isDbLocal => use local mongodb, otherwise use cloud mongodb

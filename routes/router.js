@@ -449,7 +449,7 @@ router.post('/event/delete', (req, res) => {
     });
 });
 
-
+// ----------------------- below methods are not used -------------------
 
 
 
@@ -471,6 +471,7 @@ router.get('/user_gps/', (req, res, next) => {
     })
 })
 
+// ----------------------- ---------------------------- -------------------
 
 
 module.exports = router; 
