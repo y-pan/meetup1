@@ -297,7 +297,7 @@ router.get('/event', (req, res) => {
     Event.getEventByQueryJson({ "_id": _id }, (err, data) => {
         if (err) {
             res.json({ "err": vars.MSG.ERROR_CONNECTION });
-            throw err;
+            //throw err;
         } else {
             if (!data || data.length == 0) {
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
