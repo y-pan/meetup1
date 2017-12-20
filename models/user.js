@@ -63,8 +63,7 @@ module.exports.getUserById = (id,callback)=>{
 module.exports.updateUserById = (id, body, callback) => {
     User.findById(id, (err, userFound)=>{
         if(err){ 
-            callback(err, null);
-            // throw err;
+            callback(vars.MSG.ERROR_CONNECTION, null);
         }
         else {
             userFound.name = body.name || userFound.name;
@@ -74,46 +73,46 @@ module.exports.updateUserById = (id, body, callback) => {
             userFound.loc = body.loc || userFound.loc;
 
             userFound.save((err, userFound) =>{
-                if(err) {callback(err,null); }
+                if(err) {callback(vars.MSG.ERROR_CONNECTION, null); }
                 else{ callback(null, userFound); }
             })
         }
     })    
 };
-// status:0 - not connected, -1 - not found 
+
 module.exports.deleteUserById = (id, callback) => {
     User.findById(id, (err, userFound)=>{
-        if(err){callback({code:vars.msgCode.notConnected})}
-        else if(!userFound){ callback({code:vars.msgCode.notFound}); }
+        if(err){callback(vars.MSG.ERROR_CONNECTION, null)}
+        else if(!userFound){ callback(vars.MSG.ERROR_NOTFOUND, null); }
         else{userFound.remove((err, userFound)=>{
-            if(err){ callback({code:vars.msgCode.dbOperationError})}
-            else{ callback({code:vars.msgCode.success})}
+            if(err){ callback(vars.MSG.ERROR_CONNECTION, null)}
+            else{ callback(null,userFound)}
         })}
     });
 };
 
-module.exports.updateGps = (email,lat,lon,code,callback) =>{
+// module.exports.updateGps = (email,lat,lon,code,callback) =>{
     
-    Promise.all([User.getUserByEmail_p(email), Event.getEventByCode_p(code)]).then(responses=>{
-        let _user = responses[0];
-        let _event = responses[1];
-        //console.log("\n+++++++++++++++++++\n" + _user);
-        //console.log("\n*******************\n" + _event);
-        // now to calculate distance of 
-        _user.save()
+//     Promise.all([User.getUserByEmail_p(email), Event.getEventByCode_p(code)]).then(responses=>{
+//         let _user = responses[0];
+//         let _event = responses[1];
+//         //console.log("\n+++++++++++++++++++\n" + _user);
+//         //console.log("\n*******************\n" + _event);
+//         // now to calculate distance of 
+//         _user.save()
 
-        _user.loc = [lat,lon];
-        _user.save((err, user) =>{
-            if(err) {callback(err,null); }
-            else{ 
-                //callback(null, user); 
-                //get distance
-                // Lib to do distance _user.loc and _event.loc  !!!!!!!!!!!!!!!
-            }
-        })
-    }).catch(errors => {
-        callback("Some error happened", null);
-    })
+//         _user.loc = [lat,lon];
+//         _user.save((err, user) =>{
+//             if(err) {callback(err,null); }
+//             else{ 
+//                 //callback(null, user); 
+//                 //get distance
+//                 // Lib to do distance _user.loc and _event.loc  !!!!!!!!!!!!!!!
+//             }
+//         })
+//     }).catch(errors => {
+//         callback("Some error happened", null);
+//     })
 /*
     User.getUserByEmail_p(email).then((user)=>{
         //callback(null,user);
@@ -127,7 +126,7 @@ module.exports.updateGps = (email,lat,lon,code,callback) =>{
     }).catch((err)=>{
         callback(err,null);
     })*/
-} 
+// } 
 
 //(callback(null,data)).catch(callback("error",null));
     /*
