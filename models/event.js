@@ -100,8 +100,8 @@ module.exports.getEventById = (id,callback)=>{
 module.exports.deleteEventById = (id, callback) => {
     Event.findById(id, (err, eventFound)=>{
         if(err){ 
-            throw err;
-            //callback(vars.ERROR_CONNECTION,null); 
+            // throw err;
+            callback(vars.ERROR_CONNECTION,null); 
             console.log(" => 0");
         } else {
             if(!eventFound){
@@ -111,8 +111,8 @@ module.exports.deleteEventById = (id, callback) => {
                 eventFound.remove((err, eventFound)=>{
                     if(err){ 
                         console.log(" => 2");
-                        throw err;
-                        //callback(vars.ERROR_REMOVE_FAILED, null); 
+                        // throw err;
+                        callback(vars.ERROR_REMOVE_FAILED, null); 
                     } else {
                         console.log(" => 3");
             

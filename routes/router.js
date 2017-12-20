@@ -162,7 +162,7 @@ router.post('/host_event', (req, res) => {
     Event.getEventsByQueryJson(obj, (err, data) => {
         if (err) {
             res.json({ "err": vars.MSG.ERROR_CONNECTION });
-            throw err;
+            //throw err;
         } else {
 
             if (!data || data.length == 0) {
@@ -188,7 +188,7 @@ router.get('/event/search', (req, res) => {
     Event.getEventsByQueryJson({}, (err, data) => {
         if (err) {
             res.json({ "err": vars.MSG.ERROR_CONNECTION });
-            throw err;
+            // throw err;
         } else {
             if (!data || data.length == 0) {
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
@@ -234,7 +234,7 @@ router.post('/event/subscribe', (req, res) => {
                 Event.getEventByQueryJson({ "_id": event_id }, (err, data) => {
                     if (err) {
                         res.json({ "err": vars.MSG.ERROR_CONNECTION });
-                        throw err;
+                        // throw err;
                     } else {
                         if (!data || data.length == 0) {
                             res.json({ "err": vars.MSG.ERROR_NOTFOUND });
@@ -265,7 +265,7 @@ router.post('/event/subscribe', (req, res) => {
                             Event.updateEvent(data, (err, newData) => {
                                 if (err) {
                                     res.json({ "err": vars.MSG.ERROR_CONNECTION });
-                                    throw err;
+                                    // throw err;
                                 } else {
                                     if (!newData || newData.length == 0) {
                                         res.json({ "err": vars.MSG.ERROR_NOTFOUND });
@@ -302,7 +302,6 @@ router.get('/event', (req, res) => {
             if (!data || data.length == 0) {
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
             } else {
-
                 res.json({ "data": data });
             }
         }
@@ -318,16 +317,19 @@ router.get('/guest_event', (req, res) => {
         return;
     }
 
+    let eventArray = [];
     // console.log(" search:" +lat + ", "+lon + ", "+dis);
-    Event.getEventByQueryJson({ "members": guest_id }, (err, data) => {
+    Event.getEventsByQueryJson({ "members": guest_id }, (err, data) => {
         if (err) {
             res.json({ "err": vars.MSG.ERROR_CONNECTION });
-            throw err;
+            // throw err;
         } else {
             if (!data || data.length == 0) {
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
             } else {
+
                 res.json({ "data": data });
+                console.log(data);
             }
         }
     });

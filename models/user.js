@@ -62,7 +62,10 @@ module.exports.getUserById = (id,callback)=>{
 
 module.exports.updateUserById = (id, body, callback) => {
     User.findById(id, (err, userFound)=>{
-        if(err){ throw err;}
+        if(err){ 
+            callback(err, null);
+            // throw err;
+        }
         else {
             userFound.name = body.name || userFound.name;
             userFound.number = body.number || userFound.number;
