@@ -447,22 +447,22 @@ router.post('/event/delete', (req, res) => {
 
 
 //http://localhost:5000/api/user_gps?email=panyunkui@gmail.com&lat=-123.111&lon=111.000&code=abc
-router.get('/user_gps/', (req, res, next) => {
-    console.log('user_gps');
-    let email = req.query.email;
-    let lat = req.query.lat;
-    let lon = req.query.lon;
-    let code = req.query.code;
+// router.get('/user_gps/', (req, res, next) => {
+//     console.log('user_gps');
+//     let email = req.query.email;
+//     let lat = req.query.lat;
+//     let lon = req.query.lon;
+//     let code = req.query.code;
 
-    User.updateGps(email, lat, lon, code, (err, data) => {
-        if (err) {
-            res.send(err);
-        }
-        else {
-            res.send(data);
-        }
-    })
-})
+//     User.updateGps(email, lat, lon, code, (err, data) => {
+//         if (err) {
+//             res.send(err);
+//         }
+//         else {
+//             res.send(data);
+//         }
+//     })
+// })
 
 // ----------------------- ---------------------------- -------------------
 
