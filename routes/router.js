@@ -317,7 +317,7 @@ router.get('/guest_event', (req, res) => {
         return;
     }
 
-    let eventArray = [];
+    // let eventArray = [];
     // console.log(" search:" +lat + ", "+lon + ", "+dis);
     Event.getEventsByQueryJson({ "members": guest_id }, (err, data) => {
         if (err) {
@@ -327,7 +327,6 @@ router.get('/guest_event', (req, res) => {
             if (!data || data.length == 0) {
                 res.json({ "err": vars.MSG.ERROR_NOTFOUND });
             } else {
-
                 res.json({ "data": data });
                 console.log(data);
             }
